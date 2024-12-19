@@ -241,15 +241,28 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("devicemotion", (dat) => {
     if (ios) {
       // iOS の時
-      // ここに追加
+      aX = dat.accelerationIncludingGravity.x || 0;
+      aY = dat.accelerationIncludingGravity.y || 0;
+      aZ = dat.accelerationIncludingGravity.z || 0;
     } else {
       // android の時
-      // ここに追加
+      aX = -1 * dat.accelerationIncludingGravity.x || 0;
+      aY = -1 * dat.accelerationIncludingGravity.y || 0;
+      aZ = -1 * dat.accelerationIncludingGravity.z || 0;
     }
   });
 
   // ジャイロセンサの値の取得
-  // ここに追加
+  window.addEventListener(
+    "deviceorientation",
+    (event) => {
+      alpha = event.alpha || 0;
+      beta = event.beta || 0;
+      gamma = event.gamma || 0;
+      console.log("Gyro:", alpha, beta, gamma);
+    },
+    false
+  );
 
   // 一定時間ごとに
   let graphtimer = window.setInterval(() => {
@@ -284,24 +297,39 @@ document.addEventListener("DOMContentLoaded", function () {
 // プレイヤーの移動
 function move(){
   player.position.z -= 0.2;
-  // 変更
-  if (gamma > 20) {
+  if (gamma > 20 && !isMoving) {
     if (index == 0 || index == 1) {
+      isMoving = true;
       index += 1;
       player.position.x = course[index];
     }
-  } else if (gamma < -20) {
+  } else if (gamma < -20 && !isMoving) {
     if (index == 1 || index == 2) {
+      isMoving = true;
       index -= 1;
       player.position.x = course[index];
     }
+  } else if (gamma < 1.5 && gamma > -1.5) {
+    isMoving = false;
   }
 }
 
 // プレイヤーのジャンプ
 function jump() {
-  // ここに追加
+  // 変更
+  if (!isJumping && aZ > 0) {
+    player_v_y = initial_velocity;
+    isJumping = true;
+  } else if (isJumping) {
+    player_v_y -= gravity;
+    player.position.y += player_v_y;
+    if (player.position.y <= 0) {
+      isJumping = false;
+      player.position.y = 0;
+    }
+  }
 }
+
 
 // 衝突判定
 function collision() {
@@ -321,11 +349,19 @@ function collision() {
   helper = new Box3Helper(playerBoundingBox, 0xff0000);
   scene.add(helper);
 
-  // 障害物との衝突
-  // ここに追加
+  // 障害物の衝突判定
+  enemy_list = enemy_list.filter((enemy) => {
+    const enemyBoundingBox = new Box3().setFromObject(enemy);
+    helper = new Box3Helper(enemyBoundingBox, 0xff0000);
+    scene.add(helper);
+  });
 
-  // スマホとの衝突
-  // ここに追加
+  // スマホの衝突判定
+  phone_list = phone_list.filter((phone) => {
+    const phoneBoundingBox = new Box3().setFromObject(phone);
+    helper = new Box3Helper(phoneBoundingBox, 0xff0000);
+    scene.add(helper);
+  });
 
   // ゴールとの衝突
   if (goal) {
@@ -349,9 +385,9 @@ function animate() {
     // 移動関数の実行
     move();
     // ジャンプ関数の実行
-    // ここに追加
+    jump();
     // 衝突判定関数の実行
-    // ここに追加
+    collision();
     // カメラの移動
     camera.position.set(0, 8, player.position.z + 10);
     camera.lookAt(new Vector3(0, 5, player.position.z));
