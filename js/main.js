@@ -98,7 +98,7 @@ const textureUrls = [
 
 // 読み込む GLB モデルのパス
 const glbUrls = [
-  "models/player_spare.glb", // プレイヤー
+  "models/run_player.glb", // プレイヤー
   "models/houses.glb", // 周りの建物
   "models/phone.glb" // スマホ
 ];
