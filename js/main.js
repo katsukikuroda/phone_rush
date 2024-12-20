@@ -333,9 +333,9 @@ function jump() {
 
 // 衝突判定
 function collision() {
-  box_X = 0;
-  box_Y = 0;
-  box_Z = 0; // サイズが合うように変えてみましょう。
+  box_X = 3;
+  box_Y = 4;
+  box_Z = 2; // サイズが合うように変えてみましょう。
   geometry = new BoxGeometry(box_X, box_Y, box_Z);
   sphereMaterial = new MeshPhongMaterial({ color: 0xff0000 });
   playerBox = new Mesh(geometry, sphereMaterial);
