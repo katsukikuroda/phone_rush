@@ -354,14 +354,34 @@ function collision() {
     const enemyBoundingBox = new Box3().setFromObject(enemy);
     helper = new Box3Helper(enemyBoundingBox, 0xff0000);
     scene.add(helper);
+
+    // 追加
+    const isCollided = playerBoundingBox.intersectsBox(enemyBoundingBox)
+    if (isCollided) {
+      window.location.href = "./index.html";
+      return false; // この敵を削除
+    }
+    return true; // この敵を保持
+    // ここまで
   });
+
 
   // スマホの衝突判定
   phone_list = phone_list.filter((phone) => {
     const phoneBoundingBox = new Box3().setFromObject(phone);
     helper = new Box3Helper(phoneBoundingBox, 0xff0000);
     scene.add(helper);
+
+    // 追加
+    const isCollided = playerBoundingBox.intersectsBox(phoneBoundingBox)
+    if (isCollided) {
+      scene.remove(phone);
+      return false; // このスマホを削除
+    }
+    return true; // このスマホを保持
+    // ここまで
   });
+
 
   // ゴールとの衝突
   if (goal) {
