@@ -333,7 +333,7 @@ function jump() {
 
 // 衝突判定
 function collision() {
-  box_X = 3;
+  box_X = 5;
   box_Y = 4;
   box_Z = 2; // サイズが合うように変えてみましょう。
   geometry = new BoxGeometry(box_X, box_Y, box_Z);
